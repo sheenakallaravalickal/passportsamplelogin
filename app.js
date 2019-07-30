@@ -4,11 +4,23 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 let expressHBS=require('express-handlebars');
-let flash=require('connect-flash');
-let db=require('./dbconfig/db-connect');
+let flash=require('express-flash');
+let session=require('express-session')
+let passport = require('passport');
 
 
 let regRouter=require('./routes/register');
+let methodOverride=require('method-override');
+
+
+let initializePassport=require('./routes/passport-config')
+initializePassport(passport,email=>
+  users.find(user=>user.email===email)
+)
+
+
+
+
 var indexRouter = require('./routes/index');
 var loginRouter = require('./routes/login');
 
@@ -22,13 +34,22 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-
+app.use(flash());
+app.use(session({secret:'mysecret',resave:false,saveUninitialized:false}))
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(methodOverride('_method'));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/',regRouter);
+app.use('/',regRouter.router);
 app.use('/login',loginRouter);
 app.use('/profile', indexRouter);
+
+app.delete('/logout',(req,res)=>{
+  req.logout();
+  res.redirect('/login')
+})
 
 
 // catch 404 and forward to error handler
@@ -48,12 +69,5 @@ app.use(function(err, req, res, next) {
 });
 
 
-db.connect(function (error) {
-  if (error){
-    console.log('unable to connect database');
-    process.exit(1);
-  }else {
-    console.log('shopping cart database connected successfully.......');
-  }
-});
+
 module.exports = app;
