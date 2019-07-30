@@ -46,7 +46,7 @@ app.use('/login',loginRouter);
 app.use('/profile', indexRouter);
 
 app.delete('/logout',(req,res)=>{
-  req.logout();
+  req.logOut();
   res.redirect('/login')
 })
 

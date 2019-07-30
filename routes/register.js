@@ -4,7 +4,7 @@ let bcrypt =require('bcrypt')
 const users=[];
 
 
-router.get('/', function(req, res) {
+router.get('/',checkNotAuthenticated, function(req, res) {
     res.render('register');
 });
 router.post('/',async (req,res) =>{
@@ -21,12 +21,22 @@ router.post('/',async (req,res) =>{
         //console.log(users)
         res.redirect('/login');
     }catch  {
-        res.redirect('/register')
+
     }
    console.log(users)
 
 
 
 })
+
+function checkNotAuthenticated(req, res, next){
+    if(req.isAuthenticated()){
+        return res.redirect('/profile');
+
+    } else {
+        //req.flash('error_msg','You are not logged in');
+        return next();
+    }
+}
 
 module.exports = {router:router,users:users};

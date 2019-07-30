@@ -3,16 +3,26 @@ var router = express.Router();
 let passport=require('passport');
 
 
-router.get('/', function(req, res) {
+router.get('/',checkNotAuthenticated, function(req, res) {
     res.render('login',{ message: req.flash() });
 });
 
 
-router.post('/',passport.authenticate('local',{
+router.post('/',checkNotAuthenticated,passport.authenticate('local',{
     successRedirect:'/profile',
     failureRedirect:'/login',
     failureFlash:true
 
 }));
+
+function checkNotAuthenticated(req, res, next){
+    if(req.isAuthenticated()){
+        return res.redirect('/profile');
+
+    } else {
+        //req.flash('error_msg','You are not logged in');
+        return next();
+    }
+}
 
 module.exports = router;
