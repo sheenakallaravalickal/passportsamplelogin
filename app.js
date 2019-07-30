@@ -14,10 +14,9 @@ let methodOverride=require('method-override');
 
 
 let initializePassport=require('./routes/passport-config')
-initializePassport(passport,email=>
-  users.find(user=>user.email===email)
-)
-
+    initializePassport(passport,
+    email=> regRouter.users.find(user=> user.email=== email),
+    id=> regRouter.users.find(user=> user.id===id));
 
 
 

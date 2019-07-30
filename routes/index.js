@@ -6,8 +6,8 @@ var router = express.Router();
 
 
 /* GET home page. */
-router.get('/profile', function(req, res) {
-  res.render('index', { title: 'Express' });
+router.get('/', function(req, res) {
+  res.render('index', { title: req.user.name });
 });
 
 module.exports = router;
